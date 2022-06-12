@@ -2,14 +2,14 @@ package main
 
 import (
 	"encoding/binary"
-	"fmt"
 	"math"
 	"unsafe"
-	"path/filepath"
-	"strconv"
+	// "fmt"
+	// "path/filepath"
+	// "strconv"
 
-	"github.com/0xrawsec/golang-win32/win32"
-	kernel32 "github.com/0xrawsec/golang-win32/win32/kernel32"
+	// "github.com/0xrawsec/golang-win32/win32"
+	// kernel32 "github.com/0xrawsec/golang-win32/win32/kernel32"
 	windows "golang.org/x/sys/windows"
 )
 
@@ -17,40 +17,29 @@ var handle windows.Handle
 var procReadProcessMemory *windows.Proc
 
 func memoryReadInit(pid uint32) {
-  handle, _ = windows.OpenProcess(0x0010 | windows.PROCESS_VM_READ | windows.PROCESS_QUERY_INFORMATION, false, pid) //0x0010
-  // procReadProcessMemory = windows.MustLoadDLL("kernel32.dll").MustFindProc("ReadProcessMemory")
-	// var (
-	// 	hMods *windows.Handle
-	// 	length *uint32
-	// )
-	// var n uint32
-	// var needed uint32
-
-	// BOOL EnumProcessModules([in]  HANDLE  hProcess, [out] HMODULE *lphModule, [in]  DWORD   cb, [out] LPDWORD lpcbNeeded)
-	// e := windows.EnumProcessModules(
-	// 	n,
-	// 	handle,
-	// 	n, 
-	// 	uintptr(unsafe.Pointer(&needed)),
-	// )
-	win32handle, _ := kernel32.OpenProcess(0x0010 | windows.PROCESS_VM_READ | windows.PROCESS_QUERY_INFORMATION, win32.BOOL(0), win32.DWORD(pid))
-	moduleHandles, _ := kernel32.EnumProcessModules(win32handle)
-	for _, moduleHandle := range moduleHandles {
-		s, _ := kernel32.GetModuleFilenameExW(win32handle, moduleHandle)
-		targetModuleFilename := "UE4Game-Win64-Shipping.exe"
-		if(filepath.Base(s) == targetModuleFilename) {
-			fmt.Println(strconv.FormatInt(int64(moduleHandle), 16))
-			break
-		}
-	}
-	// windows.GetModuleInformation(handle, )
+  handle, _ = windows.OpenProcess(0x0010 | windows.PROCESS_VM_READ | windows.PROCESS_QUERY_INFORMATION, false, pid)
+  procReadProcessMemory = windows.MustLoadDLL("kernel32.dll").MustFindProc("ReadProcessMemory")
 }
+
+// func memoryReadInit(pid uint32) {
+// 	win32handle, _ := kernel32.OpenProcess(0x0010 | windows.PROCESS_VM_READ | windows.PROCESS_QUERY_INFORMATION, win32.BOOL(0), win32.DWORD(pid))
+// 	moduleHandles, _ := kernel32.EnumProcessModules(win32handle)
+// 	for _, moduleHandle := range moduleHandles {
+// 		s, _ := kernel32.GetModuleFilenameExW(win32handle, moduleHandle)
+// 		targetModuleFilename := "UE4Game-Win64-Shipping.exe"
+// 		if(filepath.Base(s) == targetModuleFilename) {
+// 			fmt.Println(strconv.FormatInt(int64(moduleHandle), 16))
+// 			break
+// 		}
+// 	}
+// 	// windows.GetModuleInformation(handle, )
+// }
 
 func memoryReadClose() {
   windows.CloseHandle(handle)
 }
 
-func memoryReadAt(address int) float32 {
+func readMemoryAt(address int) float32 {
   var (
 		data [4]byte
 		length uint32
@@ -64,6 +53,8 @@ func memoryReadAt(address int) float32 {
 		uintptr(len(data)), 
 		uintptr(unsafe.Pointer(&length)),
 	)
+
+	// println(a, b, c)
 	
 	bits := binary.LittleEndian.Uint32(data[:])
 	float := math.Float32frombits(bits)
