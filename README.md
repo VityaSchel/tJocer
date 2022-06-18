@@ -10,21 +10,40 @@ I have no time and no energy left to keep this project alive. I'm too exhausted 
 
 Implemented features are checked, others are either in-progress or proposals. You can open PR any time and I will try to accept it in next few years :) The hardest job is to find static pointer to value in memory, then you have to experiment with it and try to write new value, then implement logic (+render for some features) in tJocer.
 
-- [x] Radar: show position of player
-- [ ] Radar: show rotation of player's camera (in progress: pointer found)
-- [x] Radar: Show possible locations of objects
-- [ ] Radar: Show locations of objects spawned
-- [ ] Radar: Show location of enemy
-- [x] Radar: Bonnie level
-- [ ] Radar: Freddy, Chica and Foxy Levels
-- [ ] Timer: freeze timer
-- [ ] Timer: reset timer/set to value
-- [ ] Objects counter: set to value
-- [ ] Player: teleport
-- [ ] Player: noclip
-- [ ] Player: change speed
-- [ ] Enemies: freeze in place
-- [ ] Visuals: disable all effects
-- [ ] Visuals: wall-hack (see enemy through the walls)
-- [ ] Visuals: Switch to wireframe-mode
-- [ ] Gameplay: change speed of game excluding player's movement and actions and FPS
+- [ ] Radar
+  - [x] Show position of player
+  - [ ] Show rotation of player's camera (in progress: pointer found)
+  - [x] Show possible locations of objects
+  - [ ] Show locations of objects spawned
+  - [ ] Show location of enemy
+  - [ ] Display warning icon if enemy sees you
+  - [ ] Write pathfinder module to draw a line to nearest collectible
+  - [ ] Zooming map while in game
+  - [ ] Mode switcher (switch to fixed map like in PacMan)
+- [ ] Radar levels
+  - [ ] Freddy, Chica and Foxy Levels
+  - [x] Bonnie
+- [ ] Timer
+  - [ ] Freeze timer
+  - [ ] Reset timer/set to value
+- [ ] Objects counter
+  - [ ] Set to value
+- [ ] Player's movement
+  - [ ] Teleport
+  - [ ] Noclip
+  - [ ] Change walk/run speed
+- [ ] Enemies
+  - [ ] Freeze in place
+- [ ] Visuals
+  - [ ] Disable all effects
+  - [ ] Wall-hack (see enemy through the walls)
+  - [ ] Switch to wireframe-mode
+- [ ] Gameplay
+  - [ ] Slow down or speed up game time (without affecting player's movement, actions and FPS)
+
+## Installation
+
+Download latest release here.
+
+## Build
+
