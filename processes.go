@@ -73,17 +73,17 @@ func newWindowsProcess(e *windows.ProcessEntry32) WindowsProcess {
 
 const defaultName string = "UE4Game-Win64-Shipping.exe"
 
-func bindDefaultProcess() bool {
+func bindDefaultProcess() (uint32, bool) {
     procs, err := processes()
 	if err != nil {
-		return false
+		return 0, false
 	}
 
 	explorer := findProcessByName(procs, defaultName)
 	if explorer == nil {
-		return false
+		return 0, false
 	}
     
-	memoryReadInit(uint32(explorer.ProcessID))
-    return true
+	pid := uint32(explorer.ProcessID)
+    return pid, true
 }

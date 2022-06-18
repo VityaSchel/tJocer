@@ -6,7 +6,7 @@ import (
 	"unsafe"
 
 	// "log"
-	"fmt"
+	// "fmt"
 	"path/filepath"
 	"strconv"
 
@@ -22,7 +22,7 @@ var handle windows.Handle
 var procReadProcessMemory *windows.Proc
 var baseAddress int64
 
-func memoryReadInit(pid uint32) {
+func memoryReadInit(pid uint32) (int64) {
   handle, _ = windows.OpenProcess(0x0010 | windows.PROCESS_VM_READ | windows.PROCESS_QUERY_INFORMATION, false, pid)
   procReadProcessMemory = windows.MustLoadDLL("kernel32.dll").MustFindProc("ReadProcessMemory")
 	
@@ -33,13 +33,11 @@ func memoryReadInit(pid uint32) {
 		targetModuleFilename := "UE4Game-Win64-Shipping.exe"
 		if(filepath.Base(s) == targetModuleFilename) {
 			info, _ := kernel32.GetModuleInformation(win32handle, moduleHandle)
-			kernel32.GetModuleHandleW(targetModuleFilename)
-			kernel32.GetModuleInformation(win32handle, moduleHandle)
-
 			baseAddress = int64(info.LpBaseOfDll)
-			break
+			return baseAddress
 		}
 	}
+	return -1
 }
 
 func memoryReadClose() {

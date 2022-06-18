@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"image"
 	"image/color"
 	"time"
@@ -17,6 +17,7 @@ var (
 
 func initUI() {
 	playerXAddress, playerZAddress = GetAddresses()
+	fmt.Println(playerXAddress)
 }
 
 func loop() {

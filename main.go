@@ -29,7 +29,10 @@ var yoffset int32 = -500
 var textures map[string]*g.Texture = make(map[string]*g.Texture)
 
 func main() {
-	bindDefaultProcess()
+	pid, success := bindDefaultProcess()
+	fmt.Println(success)
+	memoryReadInit(pid)
+
 	wnd := g.NewMasterWindow(
 		windowName, windowSize, windowSize, 
 		g.MasterWindowFlagsNotResizable|g.MasterWindowFlagsFloating|g.MasterWindowFlagsFrameless|g.MasterWindowFlagsTransparent,
