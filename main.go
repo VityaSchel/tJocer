@@ -39,6 +39,8 @@ func main() {
 	focused = true
 	wnd.SetPos(0, 0)
 
+	initUI()
+
 	go refresh()
 	go loadTextures()
 	fmt.Println("tJocer started!")

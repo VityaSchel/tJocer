@@ -10,6 +10,15 @@ import (
 	"github.com/AllenDang/imgui-go"
 )
 
+var (
+	playerXAddress int64
+	playerZAddress int64
+)
+
+func initUI() {
+	playerXAddress, playerZAddress = GetAddresses()
+}
+
 func loop() {
 	imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0)
 	g.PushColorFrameBg(color.RGBA{10, 10, 10, 0})
@@ -23,11 +32,11 @@ func loop() {
 		g.InputInt(&yoffset),
 		g.Custom(func() {
 			canvas := g.GetCanvas()
+
+			playerXAddress, playerZAddress = GetAddresses()
 			
-			playerX := int(readMemoryAt(0x1FF7A9497C4)*pixelsInUnitX)
-			// fmt.Println(readMemoryAtByte8(0x1FF7A778278))
-			GetAddresses()
-			playerZ := int(readMemoryAt(0x1C8180A9948)*pixelsInUnitZ)
+			playerX := int(readMemoryAt(playerXAddress)*pixelsInUnitX)
+			playerZ := int(readMemoryAt(playerZAddress)*pixelsInUnitZ)
 
 			playerSpriteSize := 20
 			renderImage(
