@@ -6,10 +6,8 @@ import (
 	"image/color"
 	"path"
 	"strings"
-	"time"
-
 	g "github.com/AllenDang/giu"
-	"github.com/AllenDang/imgui-go"
+	"time"
 )
 
 const windowName string = "tJocer: The Joy of Creation: Reborn trainer"
@@ -29,55 +27,6 @@ var xoffset int32 = -430
 var yoffset int32 = -500
 
 var textures map[string]*g.Texture = make(map[string]*g.Texture)
-
-func loop() {
-	imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0)
-	g.PushColorFrameBg(color.RGBA{10, 10, 10, 0})
-	// if focused {
-	// 	g.PushColorWindowBg(color.RGBA{50, 50, 50, 128})
-	// } else {
-		g.PushColorWindowBg(color.RGBA{10, 10, 10, 0})
-	// }
-	g.SingleWindow().Layout(
-		g.InputInt(&xoffset),
-		g.InputInt(&yoffset),
-		g.Custom(func() {
-			canvas := g.GetCanvas()
-			
-			playerX := int(readMemoryAt(0x1C8180A97C4)*pixelsInUnitX)
-			playerZ := int(readMemoryAt(0x1C8180A9948)*pixelsInUnitZ)
-
-			playerSpriteSize := 20
-			renderImage(
-				canvas,
-				textures["player"], 
-				image.Pt(windowSize/2 - playerSpriteSize/2, windowSize/2 - playerSpriteSize/2), 
-				image.Pt(playerSpriteSize, playerSpriteSize),
-			)
-
-			renderImage(
-				canvas,
-				textures["maps/bonnie"], 
-				image.Pt(playerZ+int(xoffset), -playerX+int(yoffset)), 
-				image.Pt(radarSize, radarSize),
-			)
-		}),
-	)
-	g.PopStyleColor()
-	g.PopStyleColor()
-	imgui.PopStyleVar()
-	ChangeFocused(focused)
-}
-
-func refresh() {
-	ticker := time.NewTicker(time.Millisecond * 50)
-
-	for {
-		g.Update()
-
-		<-ticker.C
-	}
-}
 
 func main() {
 	bindDefaultProcess()
