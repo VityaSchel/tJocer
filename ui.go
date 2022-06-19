@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"image"
 	"image/color"
 	"strings"
@@ -36,9 +36,17 @@ func loop() {
 		g.Custom(func() {
 			canvas := g.GetCanvas()
 
-			fmt.Println(readMemoryAtByte8(baseAddress))
-			if(baseAddress == 0 || readMemoryAtByte8(baseAddress) == 0) {
+			unableToRender := false
+			if(baseAddress == 0) {
+				unableToRender = true
+			} else {
+				val, err := readMemoryAtByte8(baseAddress)
+				if(err || val == 0) {
+					unableToRender = true
+				}
+			}
 
+			if(unableToRender) {
 				drawText := func(text string) {
 					text = "tJocer:\n" + text
 					canvas.AddRectFilled(
@@ -56,7 +64,7 @@ func loop() {
 
 				pid, success := bindDefaultProcess()
 				if(!success) {
-					drawText("Couldn't get the process ID. \nMake sure you're running the game. \nMake sure you're running correct version. \nAlso make sure you're running\nthis cheat on supported OS.")
+					drawText("Run the game.\n\n\n If the problem persists: \nCouldn't get the process ID. \nMake sure you're running the game. \nMake sure you're running correct version. \nAlso make sure you're running\nthis cheat on supported OS.")
 					return
 				}
 
@@ -75,8 +83,10 @@ func loop() {
 				return
 			}
 			
-			playerX := int(readMemoryAt(playerXAddress)*pixelsInUnitX)
-			playerZ := int(readMemoryAt(playerZAddress)*pixelsInUnitZ)
+			XFloat, _ := readMemoryAt(playerXAddress)
+			ZFloat, _ := readMemoryAt(playerZAddress)
+			playerX := int(XFloat*pixelsInUnitX)
+			playerZ := int(ZFloat*pixelsInUnitZ)
 
 			playerSpriteSize := 20
 			renderImage(

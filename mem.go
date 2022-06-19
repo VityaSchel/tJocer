@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/binary"
-	// "fmt"
+	"fmt"
 	"math"
 	"unsafe"
 
@@ -50,11 +50,17 @@ func memoryReadClose() {
   windows.CloseHandle(handle)
 }
 
-func readMemoryAt(address int64) float32 {
+func readMemoryAt(address int64) (value float32, err bool) {
 	var (
 		data [4]byte
 		length uint32
 	)
+
+	defer func() {
+		if r := recover(); r != nil {
+			value, err = 0, true
+		}
+	}()
 
 	procReadProcessMemory.Call(
 		uintptr(handle), 
@@ -66,14 +72,21 @@ func readMemoryAt(address int64) float32 {
 
   bits := binary.LittleEndian.Uint32(data[:])
 	float := math.Float32frombits(bits)
-	return float
+	return float, err
 }
 
-func readMemoryAtByte8(address int64) uint64 {
+func readMemoryAtByte8(address int64) (value uint64, err bool) {
 	var (
 		data [8]byte
 		length uint32
 	)
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+			value, err = 0, true
+		}
+	}()
 
 	procReadProcessMemory.Call(
 		uintptr(handle), 
@@ -84,7 +97,7 @@ func readMemoryAtByte8(address int64) uint64 {
 	)
 	
   byte8 := binary.LittleEndian.Uint64(data[:])
-	return byte8
+	return byte8, false
 }
 
 type staticPointer struct {
@@ -120,7 +133,7 @@ func GetAddresses() (int64, int64, int64) {
 
 func calculateAddress(pointer staticPointer) string {
 	startingPointer := baseAddress + pointer.baseOffset
-	startingAddress := readMemoryAtByte8(startingPointer)
+	startingAddress, _ := readMemoryAtByte8(startingPointer)
 	var value string = strconv.FormatInt(int64(startingAddress), 16)
 
 	for i := len(pointer.offsets)-1; i >= 0; i-- {
@@ -129,7 +142,7 @@ func calculateAddress(pointer staticPointer) string {
 
 		if(i > 0) {
 			addressInt, _ := strconv.ParseInt(addressPointer, 16, 64)
-			nextAddressDecimal := readMemoryAtByte8(addressInt)			
+			nextAddressDecimal, _ := readMemoryAtByte8(addressInt)			
 			value = strconv.FormatInt(int64(nextAddressDecimal), 16)
 		} else {
 			value = addressPointer
