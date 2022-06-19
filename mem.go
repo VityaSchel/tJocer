@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/binary"
+	// "fmt"
 	"math"
 	"unsafe"
 
@@ -22,8 +23,12 @@ var handle windows.Handle
 var procReadProcessMemory *windows.Proc
 var baseAddress int64
 
-func memoryReadInit(pid uint32) (int64) {
+func memoryReadInit(pid uint32) (int64, string) {
   handle, _ = windows.OpenProcess(0x0010 | windows.PROCESS_VM_READ | windows.PROCESS_QUERY_INFORMATION, false, pid)
+	if(handle == 0) {
+		return -1, "NO_HANDLE"
+	}
+
   procReadProcessMemory = windows.MustLoadDLL("kernel32.dll").MustFindProc("ReadProcessMemory")
 	
 	win32handle, _ := kernel32.OpenProcess(0x0010 | windows.PROCESS_VM_READ | windows.PROCESS_QUERY_INFORMATION, win32.BOOL(0), win32.DWORD(pid))
@@ -34,10 +39,11 @@ func memoryReadInit(pid uint32) (int64) {
 		if(filepath.Base(s) == targetModuleFilename) {
 			info, _ := kernel32.GetModuleInformation(win32handle, moduleHandle)
 			baseAddress = int64(info.LpBaseOfDll)
-			return baseAddress
+			return baseAddress, ""
 		}
 	}
-	return -1
+
+	return -1, "BASE_ADDRESS_NOT_FOUND"
 }
 
 func memoryReadClose() {
@@ -87,14 +93,17 @@ type staticPointer struct {
 }
 
 
-func GetAddresses() (int64, int64) {
+func GetAddresses() (int64, int64, int64) {
 	xPositionPointer := staticPointer{0x2518790, []string{"2E4", "10", "8", "8", "8", "78", "5E0"}}
 	zPositionPointer := staticPointer{0x2518790, []string{"2E8", "10", "8", "8", "8", "78", "5E0"}}
+	
 	xPositionAddress := calculateAddress(xPositionPointer)
 	zPositionAddress := calculateAddress(zPositionPointer)
+	
 	xPositionAddressInt, _ := strconv.ParseInt(xPositionAddress, 16, 0)
 	zPositionAddressInt, _ := strconv.ParseInt(zPositionAddress, 16, 0)
-	return xPositionAddressInt, zPositionAddressInt
+
+	return xPositionAddressInt, zPositionAddressInt, baseAddress
 }
 
 // * are constants

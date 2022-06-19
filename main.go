@@ -29,9 +29,11 @@ var yoffset int32 = -500
 var textures map[string]*g.Texture = make(map[string]*g.Texture)
 
 func main() {
-	pid, success := bindDefaultProcess()
-	fmt.Println(success)
-	memoryReadInit(pid)
+	pid, pidFound := bindDefaultProcess()
+
+	if(pidFound) {
+		memoryReadInit(pid)
+	}
 
 	wnd := g.NewMasterWindow(
 		windowName, windowSize, windowSize, 
@@ -42,7 +44,9 @@ func main() {
 	focused = true
 	wnd.SetPos(0, 0)
 
-	initUI()
+	if(pidFound) {
+		initUI()	
+	}
 
 	go refresh()
 	go loadTextures()
@@ -74,10 +78,4 @@ func loadTextures() {
 func ChangeFocused(newValue bool) {
 	focused = newValue
 	ModifyWindow(windowName, focused)
-}
-
-func renderImage(canvas *g.Canvas, texture *g.Texture, pos1 image.Point, pos2 image.Point) {
-	if(texture != nil) {
-		canvas.AddImage(texture, pos1, pos1.Add(pos2))
-	}
 }

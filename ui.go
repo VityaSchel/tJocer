@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"strings"
 	"time"
 
 	g "github.com/AllenDang/giu"
@@ -16,8 +17,9 @@ var (
 )
 
 func initUI() {
-	playerXAddress, playerZAddress = GetAddresses()
-	fmt.Println(playerXAddress)
+	playerXAddress, 
+	playerZAddress, 
+	baseAddress = GetAddresses()
 }
 
 func loop() {
@@ -29,12 +31,49 @@ func loop() {
 		g.PushColorWindowBg(color.RGBA{10, 10, 10, 0})
 	// }
 	g.SingleWindow().Layout(
-		g.InputInt(&xoffset),
-		g.InputInt(&yoffset),
+		// g.InputInt(&xoffset),
+		// g.InputInt(&yoffset),
 		g.Custom(func() {
 			canvas := g.GetCanvas()
 
-			playerXAddress, playerZAddress = GetAddresses()
+			fmt.Println(readMemoryAtByte8(baseAddress))
+			if(baseAddress == 0 || readMemoryAtByte8(baseAddress) == 0) {
+
+				drawText := func(text string) {
+					text = "tJocer:\n" + text
+					canvas.AddRectFilled(
+						image.Pt(0, 0),
+						image.Pt(
+							windowSize, 
+							len(strings.Split(text, "\n"))*18+10,
+						), 
+						color.RGBA{0, 0, 0, 180}, 
+						1, 
+						g.DrawFlagsRoundCornersAll,
+					)
+					canvas.AddText(image.Pt(10, 10), color.White, text)
+				}
+
+				pid, success := bindDefaultProcess()
+				if(!success) {
+					drawText("Couldn't get the process ID. \nMake sure you're running the game. \nMake sure you're running correct version. \nAlso make sure you're running\nthis cheat on supported OS.")
+					return
+				}
+
+				baseAddress_, err := memoryReadInit(pid)
+				if(err == "NO_HANDLE") {
+					drawText("Couldn't get the process handle. \nMake sure you're running the game. \nAlso make sure you're running\nthis cheat on supported OS.")
+					return
+				} else if (err == "BASE_ADDRESS_NOT_FOUND") {
+					drawText("Couldn't read base address. \nMake sure you're running the game. \nAlso make sure you're running\nthis cheat on supported OS.")
+					return
+				} else if (err == "") {
+					baseAddress = baseAddress_
+					initUI()
+				}
+				
+				return
+			}
 			
 			playerX := int(readMemoryAt(playerXAddress)*pixelsInUnitX)
 			playerZ := int(readMemoryAt(playerZAddress)*pixelsInUnitZ)
@@ -61,6 +100,12 @@ func loop() {
 	g.PopStyleColor()
 	imgui.PopStyleVar()
 	ChangeFocused(focused)
+}
+
+func renderImage(canvas *g.Canvas, texture *g.Texture, pos1 image.Point, pos2 image.Point) {
+	if(texture != nil) {
+		canvas.AddImage(texture, pos1, pos1.Add(pos2))
+	}
 }
 
 func refresh() {
