@@ -41,7 +41,7 @@ func main() {
 	)
 	
 	wnd.SetBgColor(color.RGBA{0, 0, 0, 0})
-	focused = true
+	focused = false
 	wnd.SetPos(0, 0)
 
 	if(pidFound) {
@@ -50,6 +50,7 @@ func main() {
 
 	go refresh()
 	go loadTextures()
+	ChangeFocused(focused)
 	fmt.Println("tJocer started!")
 	wnd.Run(loop)
 	

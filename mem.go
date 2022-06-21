@@ -9,7 +9,6 @@ import (
 	// "log"
 	// "fmt"
 	"path/filepath"
-	"strconv"
 
 	"github.com/0xrawsec/golang-win32/win32"
 	kernel32 "github.com/0xrawsec/golang-win32/win32/kernel32"
@@ -50,7 +49,7 @@ func memoryReadClose() {
   windows.CloseHandle(handle)
 }
 
-func readMemoryAt(address int64) (value float32, err bool) {
+func readMemoryAtByte4(address int64) (value uint32, err bool) {
 	var (
 		data [4]byte
 		length uint32
@@ -58,6 +57,7 @@ func readMemoryAt(address int64) (value float32, err bool) {
 
 	defer func() {
 		if r := recover(); r != nil {
+			fmt.Println(r)
 			value, err = 0, true
 		}
 	}()
@@ -69,9 +69,19 @@ func readMemoryAt(address int64) (value float32, err bool) {
 		uintptr(len(data)), 
 		uintptr(unsafe.Pointer(&length)),
 	)
+	
+  byte4 := binary.LittleEndian.Uint32(data[:])
+	return byte4, false
+}
 
-  bits := binary.LittleEndian.Uint32(data[:])
-	float := math.Float32frombits(bits)
+
+func readMemoryAtFloat32(address int64) (value float32, err bool) {
+	result, err := readMemoryAtByte4(address)
+	if(err) {
+		return 0, true
+	}
+
+	float := math.Float32frombits(result)
 	return float, err
 }
 
@@ -112,11 +122,8 @@ func GetAddresses() (int64, int64, int64) {
 	
 	xPositionAddress := calculateAddress(xPositionPointer)
 	zPositionAddress := calculateAddress(zPositionPointer)
-	
-	xPositionAddressInt, _ := strconv.ParseInt(xPositionAddress, 16, 0)
-	zPositionAddressInt, _ := strconv.ParseInt(zPositionAddress, 16, 0)
 
-	return xPositionAddressInt, zPositionAddressInt, baseAddress
+	return xPositionAddress, zPositionAddress, baseAddress
 }
 
 // * are constants
@@ -131,30 +138,21 @@ func GetAddresses() (int64, int64, int64) {
 // the "!!!" signs indicating that they should not be executed in last iteration of loop
 // 4. return [value] this is the final address
 
-func calculateAddress(pointer staticPointer) string {
+func calculateAddress(pointer staticPointer) int64 {
 	startingPointer := baseAddress + pointer.baseOffset
 	startingAddress, _ := readMemoryAtByte8(startingPointer)
-	var value string = strconv.FormatInt(int64(startingAddress), 16)
+	var value int64 = int64(startingAddress)
 
 	for i := len(pointer.offsets)-1; i >= 0; i-- {
 		offset := pointer.offsets[i]
-		addressPointer := sumHex(value, offset)
+		addressPointer := sumHexSII(offset, int64(value))
 
 		if(i > 0) {
-			addressInt, _ := strconv.ParseInt(addressPointer, 16, 64)
-			nextAddressDecimal, _ := readMemoryAtByte8(addressInt)			
-			value = strconv.FormatInt(int64(nextAddressDecimal), 16)
+			nextAddressDecimal, _ := readMemoryAtByte8(addressPointer)			
+			value = int64(nextAddressDecimal)
 		} else {
 			value = addressPointer
 		}
 	}
 	return value
-}
-
-func sumHex(aHex string, bHex string) string {
-	aDecimal, _ := strconv.ParseInt(aHex, 16, 0)
-	bDecimal, _ := strconv.ParseInt(bHex, 16, 0)
-	resultDecimal := aDecimal + bDecimal
-	resultHex := strconv.FormatInt(resultDecimal, 16)
-	return resultHex
 }
