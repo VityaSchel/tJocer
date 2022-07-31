@@ -7,6 +7,7 @@ var TRANSLATION = map[string]string {
 	"UNKNOWN_LEVEL": "Awaiting game.\n\n\nThis screen appears during loading,\nif you see it in game, make sure\nyou're running correct version.",
 	"LEVEL_LOADING": "Loading level...",
 	"SELECT_LEVEL": "Please select the level.",
+	"NO_MAP": "Unknown level loaded. Wait.\n\n\nIf the problem persists: \nMake sure you're running correct version.\nOpen an issue in repository.",
 }
 
 func t(key string) string {

@@ -1,6 +1,9 @@
 package main
 
-// import "fmt"
+import (
+	"fmt"
+	"golang.org/x/exp/slices"
+)
 
 var (
 	playerXAddress int64
@@ -16,21 +19,25 @@ func InitAddressesManager() {
 func GetSelectedLevel() string {
 	selectedLevelAddress := sumHexISI(baseAddress, "257B93C")
 	selectedLevelID, _ := readMemoryAtByte4(selectedLevelAddress)
+	fmt.Println("selectedLevelID", selectedLevelID)
 	var Levels = map[uint32]string{
-		25: "Freddy",
-		41: "Bonnie",
-		39: "Chica",
-		26: "Foxy",
 		18: "Menu",
 		32: "Menu",
-		14: "Loading level",
-		20: "Loading level",
-		35: "Loading level",
-		38: "Loading level",
-		44: "Loading level",
-		50: "Loading level",
+		25: "Freddy",
+		26: "Foxy",
+		39: "Chica",
+		41: "Bonnie",
 	}
-	return Levels[selectedLevelID]
+	loadedLevel := Levels[selectedLevelID]
+	var LoadingLevelIDs = []uint32{
+		6, 8, 11, 12, 13, 14, 16, 20, 21, 22, 23, 27, 30, 33, 35, 36, 37, 38, 42, 44, 47, 50,
+	}
+	
+	if(loadedLevel == "" && slices.Contains(LoadingLevelIDs, selectedLevelID)) {
+		return "Loading level"
+	} else {
+		return loadedLevel
+	}
 }
 
 func GetUserPosition() (float32, float32, bool) {

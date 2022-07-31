@@ -2,7 +2,6 @@ package main
 
 import (
 	// "fmt"
-	"fmt"
 	"image"
 	"image/color"
 	"strings"
@@ -20,6 +19,13 @@ var (
 
 func initUI() {
 	InitAddressesManager()
+}
+
+var LevelsMaps = map[string]string {
+	"Freddy": "maps/freddy",
+	"Bonnie": "maps/bonnie",
+	"Chica": "maps/chica",
+	"Foxy": "maps/foxy",
 }
 
 func loop() {
@@ -54,7 +60,7 @@ func loop() {
 
 			renderImage(
 				canvas,
-				textures["maps/bonnie"], 
+				textures[LevelsMaps[selectedLevel]], 
 				image.Pt(playerZ+int(xoffset), -playerX+int(yoffset)), 
 				image.Pt(radarSize, radarSize),
 			)
@@ -124,6 +130,11 @@ func RunChecks(canvas *g.Canvas) bool {
 		case "Menu":
 			drawText(t("SELECT_LEVEL"))
 			return false
+	}
+
+	if(LevelsMaps[selectedLevel] == "") {
+		drawText(t("NO_MAP"))
+		return false
 	}
 
 	return true

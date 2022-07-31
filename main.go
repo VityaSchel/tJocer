@@ -56,7 +56,7 @@ func main() {
 	
 }
 
-var texturesPaths []string = []string{"player.png", "maps/bonnie.png"}
+var texturesPaths []string = []string{"player.png", "maps/freddy.png", "maps/bonnie.png", "maps/foxy.png", "maps/chica.png"}
 func loadTextures() {
 	ticker := time.NewTicker(time.Second * 1)
 	<-ticker.C

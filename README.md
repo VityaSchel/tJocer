@@ -47,3 +47,4 @@ Download latest release here.
 
 ## Build
 
+See [CONTRIBUTING.md]
