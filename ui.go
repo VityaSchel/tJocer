@@ -61,7 +61,7 @@ func loop() {
 			renderImage(
 				canvas,
 				textures[LevelsMaps[selectedLevel]], 
-				image.Pt(playerZ+int(xoffset), -playerX+int(yoffset)), 
+				image.Pt(-playerZ+int(xoffset), playerX+int(yoffset)), 
 				image.Pt(radarSize, radarSize),
 			)
 		}),

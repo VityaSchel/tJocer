@@ -117,8 +117,8 @@ type staticPointer struct {
 
 
 func GetAddresses() (int64, int64, int64) {
-	xPositionPointer := staticPointer{0x2518790, []string{"2E4", "10", "8", "8", "8", "78", "5E0"}}
-	zPositionPointer := staticPointer{0x2518790, []string{"2E8", "10", "8", "8", "8", "78", "5E0"}}
+	xPositionPointer := staticPointer{0x0250C5B0, []string{"E80", "F0", "80", "60", "3D8", "160", "F8"}}
+	zPositionPointer := staticPointer{0x0250C5B0, []string{"E84", "F0", "80", "60", "3D8", "160", "F8"}}
 	
 	xPositionAddress := calculateAddress(xPositionPointer)
 	zPositionAddress := calculateAddress(zPositionPointer)
