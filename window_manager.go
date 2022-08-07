@@ -17,9 +17,9 @@ func ModifyWindow(name string, focused bool) {
     if err != nil {
         panic(err)
     }
-    var flags uintptr = w32.WS_EX_TOPMOST|w32.WS_EX_NOACTIVATE|w32.WS_EX_LAYERED
+    var flags uintptr = w32.WS_EX_TOPMOST|w32.WS_EX_LAYERED
     if !focused {
-        flags = flags|w32.WS_EX_TRANSPARENT
+        flags = flags|w32.WS_EX_TRANSPARENT|w32.WS_EX_NOACTIVATE
     }
     w32.SetWindowLongPtr(w32.HWND(window), -20, flags)
 }

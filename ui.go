@@ -28,6 +28,11 @@ var LevelsMaps = map[string]string {
 	"Foxy": "maps/foxy",
 }
 
+var pixelsIn1080Square int32 = 55
+var unitsInSquare int32 = 320
+var xoffset int32 = 0
+var yoffset int32 = 0
+
 func loop() {
 	imgui.PushStyleVarFloat(imgui.StyleVarWindowBorderSize, 0)
 	g.PushColorFrameBg(color.RGBA{10, 10, 10, 0})
@@ -36,9 +41,19 @@ func loop() {
 	// } else {
 		g.PushColorWindowBg(color.RGBA{10, 10, 10, 0})
 	// }
+
+	// var pixelsInUnitX, pixelsInUnitZ, xOffset, yOffset = getUnits(selectedLevel)
+	var pixelsInRadarSquare = int(pixelsIn1080Square)*radarSize/1080
+	var xUnitsInSquare = unitsInSquare
+	var zUnitsInSquare = unitsInSquare
+	var pixelsInUnitX float32 = float32(pixelsInRadarSquare)/float32(xUnitsInSquare)
+	var pixelsInUnitZ float32 = float32(pixelsInRadarSquare)/float32(zUnitsInSquare)
+
 	g.SingleWindow().Layout(
-		// g.InputInt(&xoffset),
-		// g.InputInt(&yoffset),
+		g.InputInt(&pixelsIn1080Square),
+		g.InputInt(&unitsInSquare),
+		g.InputInt(&xoffset),
+		g.InputInt(&yoffset),
 		g.Custom(func() {
 			canvas := g.GetCanvas()
 

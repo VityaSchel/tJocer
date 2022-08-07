@@ -21,8 +21,10 @@ Implemented features are checked, others are either in-progress or proposals. Yo
   - [ ] Zooming map while in game
   - [ ] Mode switcher (switch to fixed map like in PacMan)
 - [ ] Radar levels
-  - [ ] Freddy, Chica and Foxy Levels
+  - [x] Freddy
   - [x] Bonnie
+  - [ ] Chica
+  - [ ] Foxy
 - [ ] Timer
   - [ ] Freeze timer
   - [ ] Reset timer/set to value
