@@ -24,7 +24,7 @@ func GetSelectedLevel() string {
 		18: "Menu",
 		32: "Menu",
 		25: "Freddy",
-		26: "Foxy",
+		24: "Foxy",
 		39: "Chica",
 		41: "Bonnie",
 	}
